@@ -1,0 +1,452 @@
+#include <iostream>
+#include <string>
+#include <math.h>
+#include <cstring>
+#include <sstream>
+#include <bitset>
+#include <map>
+#include <locale> 
+#include <iterator>
+#include <vector>
+using namespace std;
+char HExArr[16]={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+
+string MixColumnBin[4][4]={{"00000010","00000011","00000001","00000001"},
+{"00000001","00000010","00000011","00000001"},
+{"00000001","00000001","00000010","00000011"},
+{"00000011","00000001","00000001","00000010"}};
+
+string bin2hex(string str){
+		
+    bitset<128> set(str);  
+    //cout << hex << set.to_ulong() << endl;
+	stringstream res;
+res << hex << uppercase << set.to_ulong();
+if(str.substr(0,4) == "0000"){
+	return "0"+res.str();}
+else {
+	return res.str();}
+}
+
+string hex2bin(string p)//hexadecimal to binary
+{
+    string ap="";
+    int l=p.length();
+    for(int i=0;i<l;i++)
+    {
+        string st="";
+        if(p[i]>='0'&&p[i]<='9')
+        {
+            int te=int(p[i])-48;
+            while(te>0)
+            {
+                st+=char(te%2+48);
+                te/=2;
+            }
+            while(st.length()!=4)
+                st+='0';
+            for(int j=3;j>=0;j--)
+                ap+=st[j];
+        }
+        else
+        {
+            int te=p[i]-'A'+10;
+            while(te>0)
+            {
+                st+=char(te%2+48);
+                te/=2;
+            }
+            for(int j=3;j>=0;j--)
+                ap+=st[j];
+        }
+    }
+    return ap;
+}
+
+string RCon[10]={"00000001","00000010", "00000100", "00001000", "00010000", "00100000","01000000", "10000000","00011011","00110110"};
+
+string XoR(string str, string str2){
+string s;
+
+for(int i=0;i<str2.length();i++){
+	  if((str.at(i)=='1' && str2.at(i)=='0') || (str.at(i)=='0' && str2.at(i)=='1')) {
+		  s+="1";
+	  }
+	  else 
+		  s+="0";
+  }
+return s;}
+
+string DecToBin(int n){
+	int a[10], i; 
+	string str;  
+for(i=0; i<4; i++)    
+{    
+a[i]=n%2; 
+n= n/2;  
+}    
+for(i=i-1 ;i>=0 ;i--)    
+{  
+str+=to_string(a[i]); 
+}  
+return str;
+	}
+
+int BinToDec(string x){
+	int a=0, i=0, h;
+	
+	for(i=x.length()-1;i>=0;i--){
+		if(x.at(i)=='0'){
+		h=0;}
+		else 
+			h=1;
+		a+=h*pow(2, x.length()-i-1);
+	}
+
+	return a;
+	}
+string* shiftRow(int a, string CharArray[]){
+	string *y =  new string[sizeof(CharArray)];
+	int h=0;int i;
+	int c=0;
+	for(int i=a;i<sizeof(CharArray);i++, c++){
+		y[c] = CharArray[i];
+	}
+	
+	for (i = 0; i <a; i++, c++)
+	{
+		y[c] = CharArray[i];
+	}
+	return y;
+}
+
+
+	string a[16][16]={{"63","7C","77","7B","F2","6B","6F","C5","30","01","67","2B","FE","D7","AB","76"},
+	{"CA","82","C9","7D","FA","59","47","F0","AD","D4","A2","AF","9C","A4","72","C0"},
+	{"B7","FD","93","26","36","3F","F7","CC","34","A5","E5","F1","71","D8","31","15"},
+	{"04","C7","23","C3","18","96","05","9A","07","12","80","E2","EB","27","B2","75"},
+	{"09","83","2C","1A","1B","6E","5A","A0","52","3B","D6","B3","29","E3","2F","84"},
+	{"53","D1","00","ED","20","FC","B1","5B","6A","CB","BE","39","4A","4C","58","CF"},
+	{"D0","EF","AA","FB","43","4D","33","85","45","F9","02","7F","50","3C","9F","A8"},
+	{"51","A3","40","8F","92","9D","38","F5","BC","B6","DA","21","10","FF","F3","D2"},
+	{"CD","0C","13","EC","5F","97","44","17","C4","A7","7E","3D","64","5D","19","73"},
+	{"60","81","4F","DC","22","2A","90","88","46","EE","B8","14","DE","5E","0B","DB"},
+	{"E0","32","3A","0A","49","06","24","5C","C2","D3","AC","62","91","95","E4","79"},
+	{"E7","C8","37","6D","8D","D5","4E","A9","6C","56","F4","EA","65","7A","AE","08"},
+	{"BA","78","25","2E","1C","A6","B4","C6","E8","DD","74","1F","4B","BD","8B","8A"},
+	{"70","3E","B5","66","48","03","F6","0E","61","35","57","B9","86","C1","1D","9E"},
+	{"E1","F8","98","11","69","D9","8E","94","9B","1E","87","E9","CE","55","28","DF"},
+	{"8C","A1","89","0D","BF","E6","42","68","41","99","2D","0F","B0","54","BB","16"}};
+	map<pair<char,char>,string> myMap;
+	
+	string  SBox(string SBoxStr){
+		//cout<<" \n" <<"myMap[" <<SBoxStr.at(0)<<"][ " <<SBoxStr.at(1)<<"\n"; 
+	  //  cout<<myMap[make_pair(SBoxStr.at(0),SBoxStr.at(1))]<<" " ;
+	return myMap[make_pair(SBoxStr.at(0),SBoxStr.at(1))];
+}
+
+	int binaryproduct(int binary1, int binary2){
+	int i = 0, remainder = 0, sum[20];
+    int binaryprod = 0;
+ 
+    while (binary1 != 0 || binary2 != 0)
+    {
+        sum[i++] =(binary1 % 10 + binary2 % 10 + remainder) % 2;
+        remainder =(binary1 % 10 + binary2 % 10 + remainder) / 2;
+        binary1 = binary1 / 10;
+        binary2 = binary2 / 10;
+    }
+    if (remainder != 0)
+        sum[i++] = remainder;
+    --i;
+    while (i >= 0)
+        binaryprod = binaryprod * 10 + sum[i--];
+    return binaryprod;
+	
+	}
+	int sendBinProd(int binary1, int binary2){
+	
+	 long  multiply = 0;
+    int digit, factor = 1;
+ 
+    while (binary2 != 0)
+    {
+        digit =  binary2 % 10;
+        if (digit == 1)
+        {
+            binary1 = binary1 * factor;
+            multiply = binaryproduct(binary1, multiply);
+        }
+        else
+            binary1 = binary1 * factor;
+        binary2 = binary2 / 10;
+        factor = 10;
+    }
+    return  multiply;
+	
+	
+	}
+	string FillBin(string s){
+		cout<<"FillBin "<<s<<" ";
+		if(s.length()<8){
+				string j = s;
+				s="0";
+				int l=0;
+				cout<<7-j.length()<<" ";
+				while(l<7-j.length()){
+					
+					l++;
+					s.append("0");
+				}
+				s+=j;
+				}
+		else if(s.length()>8){
+			s=s.substr(s.length()-8, 8);
+		}
+		cout<<s<<"\n";
+		return s;
+
+	}
+
+	string MulTo02(string a){
+			//cout<<"Mullto "<<a<<" ";
+		string s;
+	if(s.length()>8){
+			s=s.substr(s.length()-8, 8);
+		}
+	else 
+	{
+  s=a.substr(1,7);
+		   s.append("0");
+	}
+		 
+	// cout<<s<<"\n";
+		return s;
+	}
+
+int main(){
+	locale loc;
+	string keyRound[11][16];
+	string RoundMatrix[11][16];
+	int Round=1;
+	string sBoxArr[4];
+	/***Fill S-BOx*/
+	for(int i=0;i<16;i++){
+	for(int m=0;m<16;m++){
+			myMap[make_pair(HExArr[i], HExArr[m])] =a[i][m];
+			//cout<<" " <<"myMap[" <<HExArr[i]<<","<< HExArr[m]<<" ]="<<myMap[make_pair(HExArr[i], HExArr[m])]<<"\n"; 
+			//cout<<myMap[HExArr[i], HExArr[m]]<<" " ;
+           }
+	//cout<<"\n";
+	}
+	/*End Fill S-Box*/
+	cout<<"Please enter the CipherText:\n";
+	string cypText;
+	cypText="54 77 6F 20 4F 6E 65 20 4E 69 6E 65 20 54 77 6F";
+	//getline (cin,cypText);
+	cout<<"Please enter the KeyText:\n";
+	string keyText="54 68 61 74 73 20 6D 79 20 4B 75 6E 67 20 46 75";
+
+	/*getline (cin,keyText);*/
+
+	/*Split by space*/
+	
+	istringstream buf(keyText);
+    istream_iterator<string> beg(buf), end;
+    vector<string> tokens(beg, end); 
+	int z=0;
+	cout<<"Key Round 0:";
+	for(auto& s: tokens ){
+		keyRound[0][z] = hex2bin(s);
+		cout<<s<<" "; 
+		z++;
+	}
+	cout<<"\n";
+
+	istringstream buf2(cypText);
+	 istream_iterator<string> beg2(buf2), end2;
+    vector<string> tokens2(beg2, end2); 
+	 z=0;
+	for(auto& s: tokens2 ){
+		RoundMatrix[0][z] = hex2bin(s);
+
+        z++;
+	}
+/*End Split*/
+    
+	
+  while(Round<11){
+	  string w[4][4];
+	int r=0;
+	z=0;
+	/*Key divide to array*/
+	for(int i=0;i<4;i++){
+		for(int m=0;m<4;m++){
+			w[m][i] = bin2hex(keyRound[Round-1][z]);
+			//cout<<w[m][i]<<"\n";
+			z++;
+		}
+	}
+	
+	/*Shift the last Row*/
+	string g[4];
+	for(int i=0;i<4;i++){
+		g[i] = w[i][3];
+	}
+	string *p, pArr[4];
+    p=shiftRow(1,g);
+	for(int i=0;i<4;i++){
+		pArr[i] = *(p+i);
+	}
+	//S-Box
+	
+	for(int i=0;i<4;i++){
+		sBoxArr[i] = hex2bin(SBox(pArr[i]));
+		//cout<<bin2hex(sBoxArr[i])<<" ";
+	}
+	//RCon
+	sBoxArr[0] =XoR(sBoxArr[0], RCon[Round-1] );
+	int eR=0;
+	z=0;
+	//Key ROund 
+	while (eR<4)
+	{
+     string wR[4];
+	for(int i=0;i<4;i++){
+		wR[i]=hex2bin(w[i][eR]);
+		wR[i] =XoR(wR[i], sBoxArr[i]);
+		keyRound[Round][z]=wR[i];
+		sBoxArr[i]=wR[i];
+		z++;
+	}
+
+       eR++;
+	}
+	cout<<"Key Round "<<Round<<":";
+	for(int i=0;i<16;i++){
+		keyRound[Round][i] = bin2hex(keyRound[Round][i]);
+		if(keyRound[Round][i]=="0" || keyRound[Round][i]=="1"||  keyRound[Round][i]=="2"||  keyRound[Round][i]=="3"|| keyRound[Round][i]=="4"||  keyRound[Round][i]=="5"||  keyRound[Round][i]=="6"|| keyRound[Round][i]=="7"||  keyRound[Round][i]=="8"|| keyRound[Round][i]=="9"){
+		string TheFirst = keyRound[Round][i];
+		keyRound[Round][i]= "0" + TheFirst;}
+	
+		cout<<keyRound[Round][i]<<" ";
+		keyRound[Round][i] = hex2bin(keyRound[Round][i]);
+	}
+	   	cout<<"\n";
+       Round++;
+}
+  //ENd of KeyRound
+
+
+  //Start of Rounds
+  Round=1;
+ while (Round<11){
+  string RoundKey[4][4];
+  string w[4][4];
+	z=0;
+	/*Key divide to array*/
+	for(int i=0;i<4;i++){
+		for(int m=0;m<4;m++){
+			RoundKey[m][i] = keyRound[Round-1][z];
+			w[m][i] =RoundMatrix[Round-1][z];
+		
+			z++;
+		}
+	}
+	
+	//XoRing RoundKey and Matrix
+	string XoRarr[4][4];
+	for(int i=0;i<4;i++){
+		for(int m=0;m<4;m++){
+			XoRarr[m][i]= XoR(RoundKey[m][i], w[m][i]);
+
+		}
+	}
+	//End Xor
+
+	for(int i=0;i<4;i++){
+		for(int m=0;m<4;m++){
+			XoRarr[m][i]= SBox(bin2hex(XoRarr[m][i]));
+		}
+	}
+
+	string *p, pArr[4];
+	for(int m=0;m<4;m++){
+		string g[4];
+	for(int i=0;i<4;i++){
+		g[i] = XoRarr[m][i];
+	}
+    p=shiftRow(m,g);
+	 for(int i=0;i<4;i++){
+		 XoRarr[m][i] = hex2bin(*(p+i));
+		cout<<XoRarr[m][i]<<" ";
+	 }
+	 
+	 cout<<"\n";
+	}
+	
+	string MixColumned[4][4];
+	string numMix[4];
+	if(Round!=10){
+	//Mix Column
+	for (int i = 0; i < 4; i++)
+	{
+		for(int m=0;m<4;m++){
+			cout<<"\n"<<i<<" "<<m<<"\n";
+			for(int h=0;h<4;h++){
+				cout<<"XORarr "<<bin2hex(XoRarr[h][m])<<"*"<<bin2hex(MixColumnBin[i][h])<<" "<<XoRarr[h][m]<<"*"<<MixColumnBin[i][h]<<"\n";;
+				if(MixColumnBin[i][h]=="00000010"){
+					numMix[h]=MulTo02((XoRarr[h][m]));
+					cout<<"Seocond "<<numMix[h]<<"\n ";
+				}
+				else if(MixColumnBin[i][h]=="00000011"){
+					//int a=stoi(XoRarr[h][m])*10;
+					numMix[h]=XoR(MulTo02(XoRarr[h][m]),XoRarr[h][m]);
+					cout<<"Agai"<<numMix[h]<<" ";
+				/*-	numMix[h]=FillBin(to_string(sendBinProd(stoi(XoRarr[h][m]),11)));
+					cout<<"Third "<<numMix[h]<<"\n ";*/
+				}
+				else if(MixColumnBin[i][h]=="00000001"){
+					numMix[h]=XoRarr[h][m];
+					cout<<"First "<<numMix[h]<<"\n ";
+				}
+
+				if(h!=0 ){
+					numMix[h]=XoR(numMix[h-1], numMix[h]);
+					MixColumned[i][m]=numMix[h];
+					}
+			}
+
+			//MixColumned[i][m]=bin2hex(MixColumned[i][m]);
+			cout<<"Mix "<<bin2hex(MixColumned[i][m])<<" "<<MixColumned[i][m]<<" \n";
+		}
+	}
+	//End MixColumn
+	for (int i = 0; i < 4; i++)
+	{
+		for(int m=0;m<4;m++){
+		XoRarr[i][m] = MixColumned[i][m];
+		}
+	}
+}
+	//XoRing RoundKey and Matrix
+	z=0;
+	for(int i=0;i<4;i++){
+		for(int m=0;m<4;m++){
+			//cout<<i<<"\n";
+			RoundMatrix[Round][z]= XoR(keyRound[Round][z], XoRarr[m][i]);
+				z++;
+		}
+	}
+	//End Xor
+	cout<<"Round "<<Round<<":";
+	for (int i = 0; i < 16; i++)
+	{
+cout<<bin2hex(RoundMatrix[Round][i])<<" ";
+	}
+	cout<<"\n";
+	Round++;
+	}
+	  system("pause");
+
+}
